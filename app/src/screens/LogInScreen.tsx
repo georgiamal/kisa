@@ -5,26 +5,88 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation';
 import { colors, fontSizes } from '../styles/theme';
+import { useState } from 'react';
+import { validateEmail, validatePassword } from '../utilities/validation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 const logo = require('../../assets/logo.png');
+
+type FormErrors = {
+    email: string | null;
+    password: string | null;
+};
+
 export default function LogInScreen() {
 	const navigation = useNavigation<NavigationProp>();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errors, setErrors] = useState<FormErrors>({
+        email: null,
+        password: null,
+    });
+
+    const handleLogin = () => {
+        const newErrors = {
+            email: validateEmail(email),
+            password: validatePassword(password),
+        };
+
+        setErrors(newErrors);
+
+        const hasErrors = Object.values(newErrors).some(error => error !== null);
+        if (hasErrors) return;
+
+        // Supabase auth call goes here later
+    };
+
 	return (
 	<View style={styles.container}>
         <View style={styles.logoContainer}>
             <Image source={logo} style={styles.logo}/>
             <Text style={styles.title}>Log In</Text>
         </View>
+
         <View style={styles.modalContainer}>
             <Text style={styles.inputLabel}>Enter your email:</Text>
-            <TextInput placeholder='Email' style={styles.inputField}/>
+            <TextInput 
+                placeholder='Email'
+                value={email}
+                onChangeText={(text) => {
+                    setEmail(text);
+                    setErrors(prev => ({ ...prev, email: null }));
+                }}
+                style={[
+                    styles.inputField,
+                    errors.email && styles.inputError
+                ]}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                />
+                {errors.email && (
+                    <Text style={styles.errorText}>{errors.email}</Text>
+                )}
             <Text style={styles.inputLabel}>Enter your password:</Text>
-            <TextInput placeholder='Password' secureTextEntry style={styles.inputField}/>
-        </View>
+                <TextInput
+                    secureTextEntry
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={(text) => {
+                        setPassword(text);
+                        setErrors(prev => ({ ...prev, password: null }));
+                    }}
+                    style={[
+                        styles.inputField,
+                        errors.password && styles.inputError
+                    ]}
+                />
+                {errors.password && (
+                    <Text style={styles.errorText}>{errors.password}</Text>
+                )}
+            </View>
+
 		<View style={styles.buttonContainer}>
-			<Button label="Log In" />
+			<Button label="Log In" onPress={handleLogin}/>
             <Button label="Log in using Google" />
             <Pressable onPress={() => navigation.navigate('SignUp')} 
                 style={({ pressed }) => [
@@ -57,7 +119,7 @@ const styles = StyleSheet.create({
 		tintColor: colors.blue,
     },
     modalContainer: {
-        flex: 1,
+        flex: 1.5,
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
@@ -76,6 +138,16 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         fontSize: fontSizes.sm,
         color: colors.darkblue,
+    },
+    inputError: {
+        borderColor: colors.orange,
+    },
+    errorText: {
+        width: '100%',
+        alignSelf: 'flex-start',
+        color: colors.orange,
+        fontSize: fontSizes.sm,
+        marginBottom: 16,
     },
     title: {
         fontSize: fontSizes.h4,

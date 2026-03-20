@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Button from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -17,8 +17,13 @@ export default function WelcomeScreen() {
 		<View style={styles.buttonContainer}>
 			<Button label="Log In" onPress={() => navigation.navigate('Login')}/>
 			<Button label="Sign up" onPress={() => navigation.navigate('SignUp')}/>
-			<Button label="Continue as guest.." onPress={() => navigation.navigate('Listings')}/>
 		</View>
+			<Pressable onPress={() => navigation.navigate('Listings')} 
+				style={({ pressed }) => [
+					pressed && styles.linkPressed
+				]}>
+				<Text style={styles.link}>Continue as guest..</Text>
+			</Pressable>
 	</View>
 	);
 }
@@ -45,5 +50,13 @@ const styles = StyleSheet.create({
 		width: '100%',
 		justifyContent: 'center',
 		alignItems: 'center',
+		paddingBottom: 10,
+		paddingTop: 20,	
 	},
+	link: {
+        color: colors.blue,
+    },
+    linkPressed: {
+        opacity: 0.6,
+    },
 });

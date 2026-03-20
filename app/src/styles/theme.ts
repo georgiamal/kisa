@@ -3,7 +3,7 @@ export const colors = {
         blue: '#449db1',
         darkblue: '#326273',
         grey: '#eeeeee',
-        orange: 'e39774',
+        orange: '#e39774',
         black: '#000',
     };
 
