@@ -1,4 +1,5 @@
 import { StyleSheet, View, Pressable, Text } from 'react-native';
+import { colors, fontSizes } from '../styles/theme';
 
 type Props = {
     label: string;
@@ -32,7 +33,8 @@ const styles = StyleSheet.create({
     button: {
         borderRadius: 13,
         borderWidth: 1,
-        backgroundColor: '#fff',
+        backgroundColor: colors.white,
+        borderColor: colors.darkblue,
         width: '100%',
         height: '100%',
         alignItems: 'center',
@@ -40,10 +42,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
         buttonLabel: {
-        color: '#000',
-        fontSize: 16,
+        color: colors.black,
+        fontSize: fontSizes.lg,
     },
     pressed: {
-        opacity: 0.7,
+        opacity: 0.6,
     },
 });

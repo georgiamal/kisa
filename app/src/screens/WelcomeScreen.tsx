@@ -14,10 +14,9 @@ export default function WelcomeScreen() {
 	return (
 	<View style={styles.container}>
 		<Image source={logo} style={styles.logo}/>
-		<Text style={styles.text}>Welcome!</Text>
 		<View style={styles.buttonContainer}>
-			<Button label="Log In" />
-			<Button label="Sign up" />
+			<Button label="Log In" onPress={() => navigation.navigate('Login')}/>
+			<Button label="Sign up" onPress={() => navigation.navigate('SignUp')}/>
 			<Button label="Continue as guest.." onPress={() => navigation.navigate('Listings')}/>
 		</View>
 	</View>
@@ -40,10 +39,10 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: fontSizes.h1,
 		fontWeight: 'bold',
-		color: colors.darkblue,
+		color: colors.blue,
 	},
 	buttonContainer: {
-		flex: 1 / 2,
+		width: '100%',
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
