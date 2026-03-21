@@ -3,6 +3,7 @@ import WelcomeScreen from '../screens/WelcomeScreen';
 import ListingsScreen from '../screens/ListingsScreen';
 import LogInScreen from '../screens/LogInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import { Session } from '@supabase/supabase-js';
 
 export type RootStackParamList = {
     Welcome: undefined;
@@ -21,13 +22,31 @@ const Stack = createNativeStackNavigator({
     },
 });
 
-export default function RootNavigator() {
+export default function RootNavigator({ 
+    session, 
+    isGuest, 
+    setIsGuest 
+}: { 
+    session: Session | null; 
+    isGuest: boolean; 
+    setIsGuest: (isGuest: boolean) => void
+}) {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name='Welcome' component={WelcomeScreen} />
-            <Stack.Screen name='Login' component={LogInScreen} />
-            <Stack.Screen name='SignUp' component={SignUpScreen} />
-            <Stack.Screen name='Listings' component={ListingsScreen} />
+            {session || isGuest? (
+                // logged in — only app screens available
+                <Stack.Screen name='Listings' component={ListingsScreen} /> 
+                // TODO: add app navigator here later
+            ) : (
+                // not logged in — only auth screens available
+                <>
+                <Stack.Screen name="Welcome">
+                        {() => <WelcomeScreen setIsGuest={setIsGuest} />}
+                    </Stack.Screen>
+                <Stack.Screen name='Login' component={LogInScreen} />
+                <Stack.Screen name='SignUp' component={SignUpScreen} />
+                </>
+            )}
         </Stack.Navigator>
     );
 }

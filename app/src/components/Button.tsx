@@ -4,15 +4,17 @@ import { colors, fontSizes } from '../styles/theme';
 type Props = {
     label: string;
     onPress?: () => void;
+    disabled?: boolean;
 };
 
-export default function Button({ label, onPress }: Props) {
+export default function Button({ label, onPress, disabled }: Props) {
     return (
     <View style={styles.buttonContainer}>
         <Pressable 
             style={({ pressed }) => [
                 styles.button,
-                pressed && styles.pressed
+                pressed && styles.pressed,
+                disabled && styles.disabled
             ]} 
             onPress={onPress}>
             <Text style={styles.buttonLabel}>{label}</Text>
@@ -47,5 +49,8 @@ const styles = StyleSheet.create({
     },
     pressed: {
         opacity: 0.6,
+    },
+    disabled: {
+        opacity: 0.5,
     },
 });

@@ -99,9 +99,9 @@ CREATE TABLE notification_preferences (
 CREATE OR REPLACE FUNCTION create_user_profile()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO profiles (id) VALUES (NEW.id);
+    INSERT INTO public.profiles (id) VALUES (NEW.id);
 
-    INSERT INTO notification_preferences (user_id) VALUES (NEW.id);
+    INSERT INTO public.notification_preferences (user_id) VALUES (NEW.id);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

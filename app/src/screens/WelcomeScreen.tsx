@@ -5,12 +5,23 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation';
 import { colors, fontSizes } from '../styles/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 const logo = require('../../assets/logo.png');
-export default function WelcomeScreen() {
+
+type Props = {
+	setIsGuest: (isGuest: boolean) => void;
+};
+
+export default function WelcomeScreen({ setIsGuest }: Props) {
 	const navigation = useNavigation<NavigationProp>();
+
+	const handleGuestMode = async () => {
+		await AsyncStorage.setItem('guest_mode', 'true');
+		setIsGuest(true);
+	};
+
 	return (
 	<View style={styles.container}>
 		<Image source={logo} style={styles.logo}/>
@@ -18,7 +29,8 @@ export default function WelcomeScreen() {
 			<Button label="Log In" onPress={() => navigation.navigate('Login')}/>
 			<Button label="Sign up" onPress={() => navigation.navigate('SignUp')}/>
 		</View>
-			<Pressable onPress={() => navigation.navigate('Listings')} 
+			<Pressable 
+				onPress={handleGuestMode} 
 				style={({ pressed }) => [
 					pressed && styles.linkPressed
 				]}>

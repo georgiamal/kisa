@@ -7,6 +7,7 @@ import { RootStackParamList } from '../navigation';
 import { colors, fontSizes } from '../styles/theme';
 import { useState } from 'react';
 import { validateConfirmPassword, validateEmail, validatePassword } from '../utilities/validation';
+import { supabase } from '../lib/supabase';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const logo = require('../../assets/logo.png');
@@ -29,7 +30,9 @@ export default function SignUpScreen() {
         confirmPassword: null,
     });
 
-    const handleSignUp = () => {
+    const [loading, setLoading] = useState(false);
+
+    const handleSignUp = async () => {
         const newErrors = {
             email: validateEmail(email),
             password: validatePassword(password),
@@ -41,7 +44,38 @@ export default function SignUpScreen() {
         const hasErrors = Object.values(newErrors).some(error => error !== null);
         if (hasErrors) return;
 
-        // Supabase auth call goes here later
+        setLoading(true);
+
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+            });
+
+            if (error) {
+                // Handle specific error types
+                if (error.message.includes('already registered')) {
+                    setErrors(prev => ({ ...prev, email: 'This email is already registered' }));
+                } else {
+                    setErrors(prev => ({ ...prev, email: error.message }));
+                }
+                return;
+            }
+
+            if (data.user && !data.session) {
+                // Email confirmation required
+                alert('Please check your email for a confirmation link');
+                navigation.navigate('Login');
+            } else if (data.session) {
+                // Auto-confirmed, user is logged in
+                alert('Account created successfully!');
+                // Navigation will happen automatically via auth state change
+            }
+        } catch (error) {
+            setErrors(prev => ({ ...prev, email: 'An unexpected error occurred' }));
+        } finally {
+            setLoading(false);
+        }
     };
 
 	return (
@@ -109,11 +143,18 @@ export default function SignUpScreen() {
 
         </View>
 		<View style={styles.buttonContainer}>
-			<Button label="Sign Up" onPress={handleSignUp}/>
-            <Pressable onPress={() => navigation.navigate('Login')} 
+			<Button 
+                label={loading ? "Creating Account..." : "Sign Up"} 
+                onPress={handleSignUp}
+                disabled={loading}
+            />
+            <Pressable 
+                onPress={() => navigation.navigate('Login')} 
                 style={({ pressed }) => [
                     pressed && styles.linkPressed
-                ]}>
+                ]}
+                disabled={loading}
+            >
                 <Text style={styles.link}>Already have an account? Log in</Text>
             </Pressable>
 		</View>

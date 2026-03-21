@@ -7,6 +7,7 @@ import { RootStackParamList } from '../navigation';
 import { colors, fontSizes } from '../styles/theme';
 import { useState } from 'react';
 import { validateEmail, validatePassword } from '../utilities/validation';
+import { supabase } from '../lib/supabase';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const logo = require('../../assets/logo.png');
@@ -37,7 +38,10 @@ export default function LogInScreen() {
         const hasErrors = Object.values(newErrors).some(error => error !== null);
         if (hasErrors) return;
 
-        // Supabase auth call goes here later
+        supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
     };
 
 	return (
@@ -87,7 +91,7 @@ export default function LogInScreen() {
 
 		<View style={styles.buttonContainer}>
 			<Button label="Log In" onPress={handleLogin}/>
-            <Button label="Log in using Google" />
+            {/* <Button label="Log in using Google" /> */}
             <Pressable onPress={() => navigation.navigate('SignUp')} 
                 style={({ pressed }) => [
                     pressed && styles.linkPressed
