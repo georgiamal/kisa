@@ -3,11 +3,11 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Button from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation';
+import { AuthStackParamList } from '../navigation';
 import { colors, fontSizes } from '../styles/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 const logo = require('../../assets/logo.png');
 
 type Props = {

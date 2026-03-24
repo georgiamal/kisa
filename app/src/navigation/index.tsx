@@ -1,28 +1,61 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import ListingsScreen from '../screens/ListingsScreen';
 import LogInScreen from '../screens/LogInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import { Session } from '@supabase/supabase-js';
 import UserProfileScreen from '../screens/UserProfileScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
+import TabNavigator from './bottomNav';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-export type RootStackParamList = {
+export type AuthStackParamList = {
+    // Auth
     Welcome: undefined;
     Login: undefined;
     SignUp: undefined;
-    Listings: undefined;
 };
 
-const Stack = createNativeStackNavigator({
-    initialRouteName: 'Welcome',
-    screens: {
-        Welcome: WelcomeScreen,
-        Login: LogInScreen,
-        SignUp: SignUpScreen,
-        Listings: ListingsScreen,
-        UserProfile: UserProfileScreen,
-    },
-});
+export type TabNavParamList = {
+    Listings: undefined;
+    Profile: undefined;
+};
+
+export type AppStackParamList = {
+    MainTabs: undefined;
+    EditProfile: undefined;
+};
+
+const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
+
+function AuthStack({ setIsGuest }: { setIsGuest: (isGuest: boolean) => void }) {
+    return (
+        <AuthStackNav.Navigator screenOptions={{ headerShown: false }}>
+            <AuthStackNav.Screen name="Welcome">
+                {() => <WelcomeScreen setIsGuest={setIsGuest} />}
+            </AuthStackNav.Screen>
+            <AuthStackNav.Screen name="Login" component={LogInScreen} />
+            <AuthStackNav.Screen name="SignUp" component={SignUpScreen} />
+        </AuthStackNav.Navigator>
+    );
+}
+
+const AppStackNav = createNativeStackNavigator<AppStackParamList>();
+const Tab = createBottomTabNavigator<TabNavParamList>();
+
+function AppStack() {
+    return (
+        <AppStackNav.Navigator>
+            <AppStackNav.Screen 
+                name="MainTabs" 
+                component={TabNavigator}
+                options={{ headerShown: false }}
+            />
+            <AppStackNav.Screen name="EditProfile" component={EditProfileScreen} />
+        </AppStackNav.Navigator>
+    );
+}
 
 export default function RootNavigator({ 
     session, 
@@ -31,25 +64,15 @@ export default function RootNavigator({
 }: { 
     session: Session | null; 
     isGuest: boolean; 
-    setIsGuest: (isGuest: boolean) => void
+    setIsGuest: (isGuest: boolean) => void;
 }) {
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {session || isGuest? (
-                // logged in — only app screens available
-                <Stack.Screen name='UserProfile' component={UserProfileScreen} />
-                // <Stack.Screen name='Listings' component={ListingsScreen} />
-                // TODO: add app navigator here later
+        <>
+            {session || isGuest ? (
+                <AppStack />
             ) : (
-                // not logged in — only auth screens available
-                <>
-                <Stack.Screen name="Welcome">
-                        {() => <WelcomeScreen setIsGuest={setIsGuest} />}
-                    </Stack.Screen>
-                <Stack.Screen name='Login' component={LogInScreen} />
-                <Stack.Screen name='SignUp' component={SignUpScreen} />
-                </>
+                <AuthStack setIsGuest={setIsGuest} />
             )}
-        </Stack.Navigator>
+        </>
     );
 }
