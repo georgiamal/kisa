@@ -5,50 +5,65 @@ type Props = {
     label: string;
     onPress?: () => void;
     disabled?: boolean;
+    variant?: 'default' | 'small' | 'medium';
 };
 
-export default function Button({ label, onPress, disabled }: Props) {
+export default function Button({ label, onPress, disabled, variant = 'default' }: Props) {
     return (
-    <View style={styles.buttonContainer}>
+    <View >
         <Pressable 
             style={({ pressed }) => [
                 styles.button,
+                variant === 'small' && styles.smallButton,
+                variant === 'medium' && styles.mediumButton,
                 pressed && styles.pressed,
                 disabled && styles.disabled
             ]} 
             onPress={onPress}>
-            <Text style={styles.buttonLabel}>{label}</Text>
+            <Text style={[
+                styles.buttonLabel,
+                variant === 'small' && styles.smallButtonLabel,
+                variant === 'medium' && styles.mediumButtonLabel
+            ]}>{label}</Text>
         </Pressable>
     </View>
     );
     }
 
 const styles = StyleSheet.create({
-    buttonContainer: {
-        width: 320,
-        height: 68,
-        marginHorizontal: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 10,
-    },
     button: {
         borderRadius: 13,
         borderWidth: 1,
         backgroundColor: colors.white,
-        borderColor: colors.darkblue,
-        width: '100%',
-        height: '100%',
+        borderColor: colors.blue,
         alignItems: 'center',
         justifyContent: 'center',
-        flexDirection: 'row',
+        paddingVertical: 14,
+        paddingHorizontal: 24,
     },
-        buttonLabel: {
+    mediumButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+    },
+    smallButton: {
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+    },
+    buttonLabel: {
         color: colors.black,
         fontSize: fontSizes.lg,
     },
+    smallButtonLabel: {
+        fontSize: fontSizes.sm,
+    },
+    mediumButtonLabel: {
+        fontSize: fontSizes.md,
+    },
     pressed: {
-        opacity: 0.6,
+        opacity: 0.5,
+        backgroundColor: colors.grey,
     },
     disabled: {
         opacity: 0.5,

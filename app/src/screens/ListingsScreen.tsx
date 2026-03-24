@@ -1,4 +1,5 @@
 import { Text, View, StyleSheet } from 'react-native';
+import { colors } from '../styles/theme';
 
 export default function ListingsScreen() {
     return (
@@ -11,11 +12,11 @@ export default function ListingsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#25292e',
+        backgroundColor: colors.black,
         justifyContent: 'center',
         alignItems: 'center',
     },
         text: {
-        color: '#fff',
+        color: colors.white,
     },
 });
